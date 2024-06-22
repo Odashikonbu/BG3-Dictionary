@@ -28,17 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Top));
             this.Search_Box = new System.Windows.Forms.TextBox();
             this.SearchButton = new System.Windows.Forms.Button();
             this.SerchResult = new System.Windows.Forms.DataGridView();
             this.CreateDictionaryButton = new System.Windows.Forms.Button();
-            this.topBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.topBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.SerchResult)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.topBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.topBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // Search_Box
@@ -80,12 +75,11 @@
             this.SerchResult.RowTemplate.Height = 21;
             this.SerchResult.Size = new System.Drawing.Size(720, 316);
             this.SerchResult.TabIndex = 2;
+            this.SerchResult.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.SerchResult_ColumnHeaderMouseClick);
             // 
             // CreateDictionaryButton
             // 
-            this.CreateDictionaryButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CreateDictionaryButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.CreateDictionaryButton.Font = new System.Drawing.Font("Yu Gothic UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.CreateDictionaryButton.Location = new System.Drawing.Point(42, 454);
             this.CreateDictionaryButton.Name = "CreateDictionaryButton";
@@ -94,14 +88,6 @@
             this.CreateDictionaryButton.Text = "Create Dictionary";
             this.CreateDictionaryButton.UseVisualStyleBackColor = true;
             this.CreateDictionaryButton.Click += new System.EventHandler(this.CreateDictionaryButton_Click);
-            // 
-            // topBindingSource
-            // 
-            this.topBindingSource.DataSource = typeof(BG3_Dictionary.Top);
-            // 
-            // topBindingSource1
-            // 
-            this.topBindingSource1.DataSource = typeof(BG3_Dictionary.Top);
             // 
             // Top
             // 
@@ -118,8 +104,6 @@
             this.Text = "BG3 Language Dictionary";
             this.Load += new System.EventHandler(this.Top_Load);
             ((System.ComponentModel.ISupportInitialize)(this.SerchResult)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.topBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.topBindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -131,8 +115,6 @@
         private System.Windows.Forms.Button SearchButton;
         private System.Windows.Forms.DataGridView SerchResult;
         private System.Windows.Forms.Button CreateDictionaryButton;
-        private System.Windows.Forms.BindingSource topBindingSource;
-        private System.Windows.Forms.BindingSource topBindingSource1;
     }
 }
 

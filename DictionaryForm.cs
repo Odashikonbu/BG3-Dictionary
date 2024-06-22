@@ -2,8 +2,10 @@
 {
     using LiteDB;
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Data;
     using System.Drawing;
     using System.IO;
@@ -26,6 +28,10 @@
     public partial class Top : Form
     {
         private string DBPath = "translation.db";
+        private List<TranslationData> result;
+        private Boolean SortedUUID = true;
+        private Boolean SortedSource = false;
+        private Boolean SortedTrans = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Top"/> class.
@@ -98,25 +104,18 @@
         /// <param name="e">The e<see cref="EventArgs"/></param>
         private void Top_Load(object sender, EventArgs e)
         {
-
             using (var db = new LiteDatabase(DBPath))
             {
                 var collection = db.GetCollection<TranslationData>("TranslationData");
-                // インデックス付ける
-                collection.EnsureIndex(x => x.ID);
-
-                var data = collection.Find(Query.All(), limit: 20).ToList();
-
-                if (data.Count > 0)
+                var data = collection.Find(Query.All(), limit: 10).ToList();
+                if (data.Count < 10)
                 {
-                    SerchResult.DataSource = data;
-                    SerchResult.Visible = data.Count >= 20;
+                    SearchButton.Enabled = false;
+                    Search_Box.Enabled = false;
                 }
-                else
-                {
-                    SerchResult.Visible = false;
-                }
+
             }
+            SerchResult.Visible = false;
         }
 
         /// <summary>
@@ -143,7 +142,9 @@
                 using (var db = new LiteDatabase(DBPath))
                 {
                     var collection = db.GetCollection<TranslationData>("TranslationData");
-                    var result = collection.Find(x => x.SourceLang.Contains(searchText)).Select(x => new TranslationData
+                    // インデックス付ける
+                    collection.EnsureIndex(x => x.ID);
+                    result = collection.Find(x => x.SourceLang.Contains(searchText)).Select(x => new TranslationData
                     {
                         UUID = x.UUID,
                         SourceLang = x.SourceLang,
@@ -242,7 +243,65 @@
                 // DB構築
                 collection.InsertBulk(list);
                 MessageBox.Show($"Creating Dictionary Complete", "Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //最低10件以上あれば検索ボタン活性化
+                var data = collection.Find(Query.All(), limit: 10).ToList();
+                if (data.Count > 0)
+                {
+                    SearchButton.Enabled = true;
+                    Search_Box.Enabled = true;
+                }
             }
+        }
+
+        private void SerchResult_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            switch (e.ColumnIndex)
+            {
+                case 0: // UUID
+                    if (SortedUUID == false)
+                    {
+                        result = result.OrderBy(d => d.UUID).ToList();
+                        SortedUUID = true;
+                    }
+                    else {
+                        result = result.OrderByDescending(d => d.UUID).ToList();
+                        SortedUUID = false;
+                    }
+                    break;
+                case 1: // 原語準ソート
+                    if (SortedSource == false)
+                    {
+                        result = result.OrderBy(d => d.SourceLang).ToList();
+                        SortedSource = true;
+                    }
+                    else
+                    {
+                        result = result.OrderByDescending(d => d.SourceLang).ToList();
+                        SortedSource = false;
+                    }
+                    break;
+                case 2: // 訳語準ソート
+                    if (SortedTrans == false)
+                    {
+                        result = result.OrderBy(d => d.TransLang).ToList();
+                        SortedTrans = true;
+                    }
+                    else
+                    {
+                        result = result.OrderByDescending(d => d.TransLang).ToList();
+                        SortedTrans = false;
+                    }
+                    break;
+                default:
+                    result = result.OrderBy(d => d.UUID).ToList();
+                    SortedUUID = true;
+                    SortedSource = false;
+                    SortedTrans = false;
+                    break;
+            }
+            SerchResult.DataSource = null;
+            SerchResult.DataSource = result;
+            SerchResult.Refresh();
         }
     }
 }
